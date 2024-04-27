@@ -1,6 +1,6 @@
 variable "name" {
   description = "Name to be used on all the resources as identifier"
-  default     = "fca"
+  default     = "prod-fca"
 }
 
 variable "region" {
@@ -13,21 +13,6 @@ variable "environment" {
   default     = "prod"
 }
 
-variable "ami" {
-  description = "The AMI to use for the instance"
-  default     = "ami-1ecegf9c1e8238ce1"
-}
-
-variable "instance_type" {
-  description = "The type of instance to start"
-  default     = "m6g.large"
-}
-
-variable "key_name" {
-  description = "The key name to use for the instance"
-  default     = "prod-fca"
-}
-
 variable "tags" {
   description = "Common tags to attach to all resources"
   type        = map(string)
@@ -37,7 +22,7 @@ variable "tags" {
   }
 }
 
-variable "iam_instance_profile " {
-  description = "The IAM Instance Profile to launch the instance with"
-  default     = "prod-fca"
+variable "load_balancer_type"" {
+  description = "The type of load balancer to create. Possible values are application or network"
+  default     = "application"
 }
