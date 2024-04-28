@@ -22,7 +22,7 @@ variable "tags" {
   }
 }
 
-variable "load_balancer_type"" {
+variable "load_balancer_type" {
   description = "The type of load balancer to create. Possible values are application or network"
   default     = "application"
 }
