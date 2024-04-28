@@ -1,0 +1,219 @@
+# Override the fullname of the chart
+fullnameOverride: flask-calculator-app
+# The namespace where the chart will be installed
+namespace: prod 
+
+# Autoscaling configuration for HPA
+autoscaling:
+  # Enable autoscaling
+  enabled: true
+  # Minimum number of replicas
+  minReplicas: 2
+  # Maximum number of replicas
+  maxReplicas: 5
+  # Target CPU utilization percentage for autoscaling
+  targetCPUUtilizationPercentage: 90
+# Number of replicas to start with
+replicaCount: 1
+
+# Update strategy
+strategyType:
+    # Rolling update configuration
+    rollingUpdate:
+      # Maximum surge during update
+      maxSurge: 25%
+      # Maximum unavailable during update
+      maxUnavailable: 25%
+    # Type of update strategy
+    type: RollingUpdate
+
+# Annotations for the pod
+podAnnotations:
+  # Annotation to allow the cluster autoscaler to evict the pod
+  cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
+
+# Labels for the pod
+labels:
+  # Environment label
+  env: "prod"
+  # Application label
+  application: "flask-calculator-app"
+
+# Service account configuration
+serviceAccount:
+  # Whether to create a service account
+  create: true
+  # Annotations for the service account
+  annotations: {}
+  # Name of the service account to use
+  name: ""
+
+# Security context for the pod
+podSecurityContext: 
+   # Group ID for the file system
+   fsGroup: 2001
+
+# Security context for the container
+securityContext: 
+
+# Image configuration
+image:
+  # Repository of the image
+  repository: {{ aws-account-id }}.dkr.ecr.ap-south-1.amazonaws.com/flask-calculator-app/prod
+  # Pull policy for the image
+  pullPolicy: IfNotPresent
+  # Tag of the image
+  tag: '0b1ee1a'
+
+# Environment variables for the container
+env: []  
+  
+# Environment variables from the pod spec
+envFrom:
+  # Pod IP
+  POD_IP: "status.podIP"
+  # Service account name
+  POD_SERVICE_ACCOUNT: "spec.serviceAccountName"
+
+# Container configuration
+container:
+  # Port for the container
+  port: 6005
+
+# Probes configuration
+probes:
+  # Enable probes
+  enabled: true
+  # Liveness probe configuration
+  livenessProbe:
+    # Path for the liveness probe
+    path: /fca/health
+    # Port for the liveness probe
+    port: 6005
+    # Initial delay for the liveness probe
+    initialDelaySeconds: 50
+    # Period for the liveness probe
+    periodSeconds: 10
+
+  # Readiness probe configuration
+  readinessProbe:
+    # Path for the readiness probe
+    path: /fca/health
+    # Port for the readiness probe
+    port: 6005
+    # Initial delay for the readiness probe
+    initialDelaySeconds: 50
+    # Period for the readiness probe
+    periodSeconds: 10
+
+# Resource requests and limits for the container
+resources:
+  # Resource limits
+  limits:
+    cpu: 512m
+    memory: 750Mi
+  # Resource requests
+  requests:
+    cpu: 256m
+    memory: 256Mi
+
+# Node selector for the pod
+nodeSelector: {}
+
+# Tolerations for the pod
+tolerations: []
+
+# Affinity for the pod
+affinity:
+  # Pod anti-affinity configuration
+  podAntiAffinity:
+    # Required during scheduling, ignored during execution
+    requiredDuringSchedulingIgnoredDuringExecution:
+    - labelSelector:
+        matchExpressions:
+        - key: application
+          operator: In
+          values:
+          - flask-calculator-app
+      # Topology key for the anti-affinity
+      topologyKey: "kubernetes.io/hostname"
+
+# Service configuration
+service:
+  # Whether to create a service
+  enabled: true
+  # Type of the service
+  type: ClusterIP
+  # Name of the service
+  name: fca
+  # Port for the service
+  port: 80
+  # Target port for the service
+  targetPort: 6005
+
+# Pod disruption budget configuration
+podDisruptionBudget:
+  # Whether to create a pod disruption budget
+  enabled: true
+  # Minimum available pods
+  minAvailable: 1
+
+# Ingress section starts from here
+
+# Bucket name for the application
+bucketName: ""
+# Environment for the application
+environment: ""
+# Spring profile for the application
+springProfileActive: ""
+
+# Ingress configuration
+ingress:
+  # Whether to enable ingress
+  enabled: true
+  # Annotations for the ingress
+  annotations:
+    # Group name for the ALB ingress
+    alb.ingress.kubernetes.io/group.name: prod-fca
+    # Health check path for the ALB ingress
+    alb.ingress.kubernetes.io/healthcheck-path: /fca/health
+    # Health check port for the ALB ingress
+    alb.ingress.kubernetes.io/healthcheck-port: "6005"
+    # Health check protocol for the ALB ingress
+    alb.ingress.kubernetes.io/healthcheck-protocol: HTTP
+    # Health check timeout for the ALB ingress
+    alb.ingress.kubernetes.io/healthcheck-timeout-seconds: "3"
+    # Healthy threshold count for the ALB ingress
+    alb.ingress.kubernetes.io/healthy-threshold-count: "3"
+    # Security groups for the ALB ingress
+    alb.ingress.kubernetes.io/security-groups: {{ security-group-id }}
+    # Listen ports for the ALB ingress
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'
+    # Scheme for the ALB ingress
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    # Health check interval for the ALB ingress
+    alb.ingress.kubernetes.io/healthcheck-interval-seconds: '5'
+    # Target type for the ALB ingress
+    alb.ingress.kubernetes.io/target-type: ip
+    # Unhealthy threshold count for the ALB ingress
+    alb.ingress.kubernetes.io/unhealthy-threshold-count: "3"
+    # Ingress class for the ALB ingress
+    kubernetes.io/ingress.class: alb
+    # Tags for the ALB ingress
+    alb.ingress.kubernetes.io/tags: component=fca,environment=prod
+  # Path for the ingress
+  path: /fca
+  # Path type for the ingress
+  pathType: Prefix
+# Backend configuration for the ingress
+backend:
+  service:
+    # Name of the service for the backend
+    name: flask-calculator-app
+    # Port for the backend
+    port:
+      number: 80    
+  # TLS configuration for the ingress
+  tls: []
+
+# Ingress section ends here

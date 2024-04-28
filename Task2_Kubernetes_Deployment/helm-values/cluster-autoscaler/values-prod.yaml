@@ -1,0 +1,53 @@
+# Image configuration
+image:
+   # Repository of the image
+   repository: registry.k8s.io/autoscaling/cluster-autoscaler
+   # Tag of the image
+   tag: v1.24.0
+   # Pull policy for the image
+   pullPolicy: Always
+
+# RBAC configuration
+rbac:
+   # Whether to create RBAC resources
+   create: true
+   # Service account configuration
+   serviceAccount:
+      # Annotations for the service account
+      annotations:
+        # Role ARN for the service account
+        eks.amazonaws.com/role-arn: arn:aws:iam::{{ aws-account-id }}:role/kube-system-prod-fca-fca-clstrautsclr-@kube-system
+
+# Cloud provider for the cluster autoscaler
+cloudProvider: aws
+# AWS region for the cluster autoscaler
+awsRegion: ap-south-1
+
+# Auto-discovery configuration
+autoDiscovery:
+   # Name of the cluster for auto-discovery
+   clusterName: prod-fca
+   # Whether to enable auto-discovery
+   enabled: true
+
+# Extra arguments for the cluster autoscaler
+extraArgs:
+   # Whether to ignore daemonsets utilization
+   ignore-daemonsets-utilization: true
+
+# Number of replicas for the cluster autoscaler
+replicaCount: 1
+
+# Resource requests and limits for the cluster autoscaler
+resources:
+   # Resource limits
+   limits:
+     cpu: 200m
+     memory: 556Mi
+   # Resource requests
+   requests:
+     cpu: 100m
+     memory: 550Mi
+
+# Priority class name for the cluster autoscaler
+priorityClassName: system-node-critical
