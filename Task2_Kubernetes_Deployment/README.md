@@ -33,6 +33,8 @@ Navigate to flask-calculator-app directory:
     
     run below commands to build and push to AWS ECR
     ```
+    aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin <your-aws-account-id>.dkr.ecr.ap-south- 
+    1.amazonaws.com
     docker build -t flask-calculator-app/prod .
     docker tag flask-calculator-app/prod:latest <your-aws-account-id>.dkr.ecr.ap-south-1.amazonaws.com/flask-calculator-app/prod:latest
     docker push <your-aws-account-id>.dkr.ecr.ap-south-1.amazonaws.com/flask-calculator-app/staging1:latest
@@ -40,6 +42,11 @@ Navigate to flask-calculator-app directory:
 
 ### 3. Install AWS ALB Ingress Controller, Cluster Autoscaler, Metrics Server, and Flask Calculator App using Helm
 
+Get Kubeconfig file for logging in to the cluster by running below command:
+
+    ```
+    aws eks --region ap-south-1 update-kubeconfig --name prod-fca
+    ```
 
 Navigate to the Helm charts directory in your workspace. and install the all 4 components bu runing following commands:
 
