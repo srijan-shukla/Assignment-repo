@@ -16,7 +16,7 @@ rbac:
       # Annotations for the service account
       annotations:
         # Role ARN for the service account
-        eks.amazonaws.com/role-arn: arn:aws:iam::{{ aws-account-id }}:role/kube-system-prod-fca-fca-clstrautsclr-@kube-system
+        eks.amazonaws.com/role-arn: arn:aws:iam::{{ .Values.iamrole.awsAccountId }}:role/kube-system-prod-fca-fca-clstrautsclr-@kube-system
 
 # Cloud provider for the cluster autoscaler
 cloudProvider: aws

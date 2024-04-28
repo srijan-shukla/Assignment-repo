@@ -59,11 +59,11 @@ securityContext:
 # Image configuration
 image:
   # Repository of the image
-  repository: {{ aws-account-id }}.dkr.ecr.ap-south-1.amazonaws.com/flask-calculator-app/prod
+  repository: {{ .Values.image.repository.awsAccountId }}.dkr.ecr.ap-south-1.amazonaws.com/flask-calculator-app/prod
   # Pull policy for the image
   pullPolicy: IfNotPresent
   # Tag of the image
-  tag: '0b1ee1a'
+  tag: "{{ .Values.image.tag }}"
 
 # Environment variables for the container
 env: []  
@@ -173,6 +173,7 @@ ingress:
   enabled: true
   # Annotations for the ingress
   annotations:
+    alb.ingress.kubernetes.io/certificate-arn: {{ .Values.certficatearn }}
     # Group name for the ALB ingress
     alb.ingress.kubernetes.io/group.name: prod-fca
     # Health check path for the ALB ingress
@@ -186,7 +187,7 @@ ingress:
     # Healthy threshold count for the ALB ingress
     alb.ingress.kubernetes.io/healthy-threshold-count: "3"
     # Security groups for the ALB ingress
-    alb.ingress.kubernetes.io/security-groups: {{ security-group-id }}
+    alb.ingress.kubernetes.io/security-groups: {{ .Values.security-group-id }}
     # Listen ports for the ALB ingress
     alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'
     # Scheme for the ALB ingress

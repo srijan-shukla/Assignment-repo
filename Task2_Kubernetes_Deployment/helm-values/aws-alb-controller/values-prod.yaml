@@ -6,7 +6,7 @@ serviceAccount:
   create: true
   # Annotations to add to the service account
   annotations:
-      eks.amazonaws.com/role-arn: arn:aws:iam::{{ aws-account-id }}:role/kube-system-prod-fca-fca-albcontrlr-@kube-system
+      eks.amazonaws.com/role-arn: arn:aws:iam::{{ .Values.iamrole.awsAccountId }}:role/kube-system-prod-fca-fca-albcontrlr-@kube-system
    
   # Automount API credentials for a Service Account.
   automountServiceAccountToken: true
